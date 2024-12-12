@@ -1,4 +1,4 @@
-package com.example.saproject.tranferenciasSA;
+package com.saproject.tranferenciasSA;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

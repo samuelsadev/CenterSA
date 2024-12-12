@@ -1,4 +1,4 @@
-package com.example.saproject.tranferenciasSA;
+package com.saproject.tranferenciasSA;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
