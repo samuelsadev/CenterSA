@@ -13,7 +13,7 @@ services:
       - mongo-data:/data/db
     networks:
       - spring-mongo
-      -
+
   rabbitmq:
     image: rabbitmq:3.9.8-management-alpine
     container_name: rabbitmq
