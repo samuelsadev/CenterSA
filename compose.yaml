@@ -29,15 +29,15 @@ services:
     networks:
       - spring-mongo
 
-  transferenciassa:
-    image: transferenciassa
+  CenterSA:
+    image: record
     restart: always
     build: .
     environment:
       - SPRING_DATA_MONGODB_HOST=mongo
       - SPRING_DATA_MONGODB_USERNAME=admin
       - SPRING_DATA_MONGODB_PASSWORD=admin123
-      - SPRING_DATA_MONGODB_DATABASE=transferenciassa_db
+      - SPRING_DATA_MONGODB_DATABASE=record_db
       - SPRING_RABBITMQ_HOST=rabbitmq
       - SPRING_RABBITMQ_USERNAME=guest
       - SPRING_RABBITMQ_PASSWORD=guest

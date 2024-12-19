@@ -1,13 +1,13 @@
-package com.saproject.tranferenciasSA;
+package com.saproject.centerSA;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TranferenciasSaApplication {
+public class CenterSaApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TranferenciasSaApplication.class, args);
+		SpringApplication.run(CenterSaApplication.class, args);
 	}
 
 }

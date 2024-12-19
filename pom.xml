@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.saproject</groupId>
-	<artifactId>tranferenciasSA</artifactId>
+	<artifactId>CenterSA</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>tranferenciasSA</name>
 	<description>Sistema de transferencias</description>
