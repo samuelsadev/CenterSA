@@ -1,6 +1,6 @@
 package com.saproject.centerSA.controller;
 
-import com.saproject.centerSA.client.AccountResponse;
+import com.saproject.centerSA.dto.AccountDTO;
 import com.saproject.centerSA.service.CenterSaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,9 +16,9 @@ public class CenterSaController {
     CenterSaService centerSaService;
 
     @GetMapping("/{id}")
-    public AccountResponse findById(@PathVariable Long id) {
-        AccountResponse account = centerSaService.findById(id);
-        System.out.println("Returned account: " + account);  // Log para verificar os dados
+    public AccountDTO findById(@PathVariable Long id) {
+        AccountDTO account = centerSaService.findById(id);
+        System.out.println("Returned account: " + account);
         return account;
     }
 }

@@ -1,7 +1,7 @@
 package com.saproject.centerSA.service;
 
 import com.saproject.centerSA.client.AccountBankSAClient;
-import com.saproject.centerSA.client.AccountResponse;
+import com.saproject.centerSA.dto.AccountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ public class CenterSaService {
     @Autowired
     AccountBankSAClient accountBankSAClient;
 
-    public AccountResponse findById(Long id) {
+    public AccountDTO findById(Long id) {
         return accountBankSAClient.findById(id);
     }
 }

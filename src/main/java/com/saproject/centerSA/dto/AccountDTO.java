@@ -1,4 +1,4 @@
-package com.saproject.centerSA.client;
+package com.saproject.centerSA.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AccountResponse {
+public class AccountDTO {
 
     @JsonProperty("id")
     private Long id;
