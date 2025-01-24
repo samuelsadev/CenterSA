@@ -5,7 +5,7 @@ import com.saproject.centerSA.dto.TransactionDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "account-service", url = "http://localhost:8080/api/account")
+@FeignClient(name = "account-service", url = "http://localhost:8083/api/account")
 public interface AccountFeignClient {
 
     @PostMapping("/deposit/{id}")
