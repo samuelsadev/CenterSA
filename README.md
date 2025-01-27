@@ -3,7 +3,7 @@
 ## Descrição do Projeto
 Desenvolvi uma API com Java e Spring, ela consome a minha API AccountBankSA, assim tendo acesso as contas bancárias, ela tem como função orquestrar depósitos, saques e transferência entre contas cadastradas, essa API utiliza um banco de dados não relacional MongoDB, para guardar registros de operações realizadas num formato Json, utilizei o RabbitMQ como sistema de mensageria para as operações realizadas, e realizar operações a partir de mensagens em formato string que ficam armazenadas na queue. Todp sistema está em um contêiner no Docker
 
-Intalção do projeto no docker-compose, com o seguinte comando no terminal bash: **docker-compose up -d --build**
+- Intalção do projeto no docker-compose, com o seguinte comando no terminal bash: **docker-compose up -d --build**
 
 
 ## Tecnologias Utilizadas
