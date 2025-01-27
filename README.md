@@ -28,13 +28,12 @@ Intalção do projeto no docker-compose, com o seguinte comando no terminal bash
 
 **Imagens**
 
-<img src="img/CollectionCRUD.png" alt="CRUD" width="600"/>
-  <img src="img/CadastroUsuario.png" alt="CRUD" width="600"/>
-  <img src="img/AutenticarUsuario.png" alt="CRUD" width="600"/>
-  <img src="img/AtualizarUsuario.png" alt="CRUD" width="600"/>
-  <img src="img/VisualizarContas.png" alt="CRUD" width="600"/>
-  <img src="img/CRUDSwagger.png" alt="CRUD" width="600"/>
-<img src="img/RequisicoesSwagger.png" alt="CRUD" width="600"/>
-<img src="img/ContainerDocker.png" alt="CRUD" width="600"/>
+<img src="img/CenterSwagger.png" alt="CRUD" width="600"/>
+  <img src="img/Transfers.png" alt="CRUD" width="600"/>
+  <img src="img/RabbitmqMessage.png" alt="CRUD" width="600"/>
+  <img src="img/MongoDB.png" alt="CRUD" width="600"/>
+  <img src="img/Queue.png" alt="CRUD" width="600"/>
+  <img src="img/Docker.png" alt="CRUD" width="600"/>
+
 
 
