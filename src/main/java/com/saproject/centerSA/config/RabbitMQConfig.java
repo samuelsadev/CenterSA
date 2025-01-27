@@ -1,5 +1,6 @@
 package com.saproject.centerSA.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -65,6 +66,11 @@ public class RabbitMQConfig {
                 .with(ROUTING_KEY);
         System.out.println("Binding created: " + binding);
         return binding;
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 
 
