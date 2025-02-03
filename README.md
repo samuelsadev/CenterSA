@@ -11,7 +11,7 @@ Desenvolvi uma API com Java e Spring, ela consome a minha API AccountBankSA, ass
 - **Spring Boot**: Framework utilizado.
 - **Banco de Dados**: MongoDB.
 - **Ferramentas**: Maven, Docker Compose, RabbitMQ, Swagger.
-- **API Externa**: Ex: AccountBankSA.
+- **API Externa**: AccountBankSA.
 - **JUnit/Mockito**: Testes unitários.
 - **Docker**: Docker Compose.
 
