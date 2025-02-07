@@ -1,6 +1,7 @@
 package com.saproject.centerSA.service;
 
 import com.saproject.centerSA.client.AccountFeignClient;
+import com.saproject.centerSA.consumer.RabbitMQConsumer;
 import com.saproject.centerSA.dto.AccountDTO;
 import com.saproject.centerSA.dto.TransactionDTO;
 import com.saproject.centerSA.dto.TransactionRecord;
@@ -15,15 +16,15 @@ public class TransactionService {
 
     private final AccountFeignClient accountFeignClient;
     private final TransactionRepository transactionRepository;
-    private final RabbitMQProducer rabbitMQProducer;
+    private final RabbitMQConsumer rabbitMQConsumer;
 
     @Autowired
     public TransactionService(AccountFeignClient accountFeignClient,
                               TransactionRepository transactionRepository,
-                              RabbitMQProducer rabbitMQProducer) {
+                              RabbitMQConsumer rabbitMQConsumer) {
         this.accountFeignClient = accountFeignClient;
         this.transactionRepository = transactionRepository;
-        this.rabbitMQProducer = rabbitMQProducer;
+        this.rabbitMQConsumer = rabbitMQConsumer;
     }
 
     public AccountDTO deposit(Long accountId, double amount) {
@@ -38,11 +39,8 @@ public class TransactionService {
             record.setTimestamp(LocalDateTime.now().toString());
             transactionRepository.save(record);
 
-            rabbitMQProducer.sendMessage("Deposit successful for Account ID: " + accountId + ", Amount: " + amount);
-
             return updatedAccount;
         } catch (Exception e) {
-            rabbitMQProducer.sendMessage("Error during deposit for Account ID: " + accountId + " - " + e.getMessage());
             throw e;
         }
     }
@@ -59,35 +57,13 @@ public class TransactionService {
             record.setTimestamp(LocalDateTime.now().toString());
             transactionRepository.save(record);
 
-            rabbitMQProducer.sendMessage("Withdraw successful for Account ID: " + accountId + ", Amount: " + amount);
-
             return updatedAccount;
         } catch (Exception e) {
-            rabbitMQProducer.sendMessage("Error during withdraw for Account ID: " + accountId + " - " + e.getMessage());
             throw e;
         }
     }
 
     public void transfer(TransactionDTO transactionDTO) {
-        try {
-            accountFeignClient.processTransaction(transactionDTO);
-
-            TransactionRecord record = new TransactionRecord();
-            record.setType("transfer");
-            record.setOriginAccount(transactionDTO.originAccountNumber());
-            record.setDestinationAccount(transactionDTO.destinationAccountNumber());
-            record.setAmount(transactionDTO.amount());
-            record.setTimestamp(LocalDateTime.now().toString());
-            transactionRepository.save(record);
-
-            rabbitMQProducer.sendMessage("Transfer successful: " +
-                    "From " + transactionDTO.originAccountNumber() +
-                    " To " + transactionDTO.destinationAccountNumber() +
-                    ", Amount: " + transactionDTO.amount());
-        } catch (Exception e) {
-            rabbitMQProducer.sendMessage("Error during transfer: " + e.getMessage());
-            throw e;
-        }
+        rabbitMQConsumer.processTransaction(transactionDTO);
     }
 }
-
