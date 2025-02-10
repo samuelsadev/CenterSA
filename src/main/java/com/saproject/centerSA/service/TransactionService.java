@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class TransactionService {
@@ -64,6 +65,7 @@ public class TransactionService {
     }
 
     public void transfer(TransactionDTO transactionDTO) {
-        rabbitMQConsumer.processTransaction(transactionDTO);
+        String transactionId = UUID.randomUUID().toString();
+        rabbitMQConsumer.processTransaction(transactionId, transactionDTO);
     }
 }

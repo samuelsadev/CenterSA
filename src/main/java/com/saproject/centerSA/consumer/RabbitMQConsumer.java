@@ -56,7 +56,7 @@ public class RabbitMQConsumer {
         }
     }
 
-    private void processTransaction(String transactionId, TransactionDTO transactionDTO) {
+    public void processTransaction(String transactionId, TransactionDTO transactionDTO) {
         TransactionRecord transactionRecord = new TransactionRecord(transactionId, "INITIALIZED", transactionDTO);
         transactionRepository.save(transactionRecord);
         logger.info("[TRANSACTION INITIALIZED] ID: {}, Amount: {}", transactionId, transactionDTO.amount());
