@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DeadLetterQueueConsumer {
 
-    @RabbitListener(queues = RabbitMQConfig.TRANSACTIONS_DLQ)
+    @RabbitListener(queues = RabbitMQConfig.DLQ_TRANSACTIONS)
     public void receiveDeadLetter(@Payload String failedMessage) {
         System.err.println("Mensage send to DLQ: " + failedMessage);
     }
