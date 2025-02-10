@@ -17,9 +17,9 @@ public class RabbitMQConfig {
     public static final String EXCHANGE_TRANSACTIONS = "transactions_exchange";
     public static final String ROUTING_KEY = "transactions_routing_key";
 
-    public static final String DLX_EXCHANGE = "dlx_exchange";
+    public static final String EXCHANGE_DLX = "exchange_dlx";
     public static final String TRANSACTIONS_DLQ = "transactions_queue_dlq";
-    public static final String ROUTING_KEY_DLQ = "transactions_routing_key_dlq";
+    public static final String ROUTING_KEY_DLQ = "routing_key_dlq";
 
     @Bean
     public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
@@ -50,7 +50,7 @@ public class RabbitMQConfig {
     @Bean
     public Queue transactionQueue() {
         return QueueBuilder.durable(QUEUE_TRANSACTIONS)
-                .withArgument("x-dead-letter-exchange", DLX_EXCHANGE)
+                .withArgument("x-dead-letter-exchange", EXCHANGE_DLX)
                 .withArgument("x-dead-letter-routing-key", ROUTING_KEY_DLQ)
                 .build();
     }
@@ -67,7 +67,7 @@ public class RabbitMQConfig {
 
     @Bean
     public DirectExchange deadLetterExchange() {
-        return new DirectExchange(DLX_EXCHANGE);
+        return new DirectExchange(EXCHANGE_DLX);
     }
 
     @Bean
