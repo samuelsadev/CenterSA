@@ -17,6 +17,10 @@ public class RabbitMQConfig {
     public static final String EXCHANGE_TRANSACTIONS = "transactions_exchange";
     public static final String ROUTING_KEY = "transactions_routing_key";
 
+    public static final String DLX_EXCHANGE = "dlx_exchange";
+    public static final String DLQ_TRANSACTIONS = "dlq_transactions_queue";
+    public static final String DLQ_ROUTING_KEY = "dlq_routing_key";
+
     @Bean
     public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
         return new RabbitAdmin(connectionFactory);
@@ -25,13 +29,18 @@ public class RabbitMQConfig {
     @Bean
     public ApplicationListener<ApplicationReadyEvent> inicializarAdmin(RabbitAdmin rabbitAdmin) {
         return event -> {
-            rabbitAdmin.declareQueue(transactionQueue());
             rabbitAdmin.declareExchange(transactionsExchange());
+            rabbitAdmin.declareExchange(deadLetterExchange());
+
+            rabbitAdmin.declareQueue(transactionQueue());
+            rabbitAdmin.declareQueue(deadLetterQueue());
+
             rabbitAdmin.declareBinding(transactionsBinding(transactionQueue(), transactionsExchange()));
+            rabbitAdmin.declareBinding(deadLetterBinding());
+
             rabbitAdmin.initialize();
         };
     }
-
 
     @Bean
     public Jackson2JsonMessageConverter jackson2JsonMessageConverter() {
@@ -40,7 +49,15 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue transactionQueue() {
-        return new Queue(QUEUE_TRANSACTIONS, true, false, false);
+        return QueueBuilder.durable(QUEUE_TRANSACTIONS)
+                .withArgument("x-dead-letter-exchange", DLX_EXCHANGE)
+                .withArgument("x-dead-letter-routing-key", DLQ_ROUTING_KEY)
+                .build();
+    }
+
+    @Bean
+    public Queue deadLetterQueue() {
+        return QueueBuilder.durable(DLQ_TRANSACTIONS).build();
     }
 
     @Bean
@@ -49,10 +66,22 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public DirectExchange deadLetterExchange() {
+        return new DirectExchange(DLX_EXCHANGE);
+    }
+
+    @Bean
     public Binding transactionsBinding(Queue transactionQueue, DirectExchange transactionsExchange) {
         return BindingBuilder.bind(transactionQueue)
                 .to(transactionsExchange)
                 .with(ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding deadLetterBinding() {
+        return BindingBuilder.bind(deadLetterQueue())
+                .to(deadLetterExchange())
+                .with(DLQ_ROUTING_KEY);
     }
 
     @Bean
