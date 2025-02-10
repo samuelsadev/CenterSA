@@ -5,7 +5,6 @@ import com.saproject.centerSA.dto.AccountDTO;
 import com.saproject.centerSA.dto.TransactionDTO;
 import com.saproject.centerSA.dto.TransactionRecord;
 import com.saproject.centerSA.repository.TransactionRepository;
-import com.saproject.centerSA.service.RabbitMQProducer;
 import com.saproject.centerSA.service.TransactionService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -25,9 +24,6 @@ class TransactionServiceTest {
 
     @Mock
     private TransactionRepository transactionRepository;
-
-    @Mock
-    private RabbitMQProducer rabbitMQProducer;
 
     @InjectMocks
     private TransactionService transactionService;
@@ -49,7 +45,6 @@ class TransactionServiceTest {
 
         verify(accountFeignClient, times(1)).deposit(accountDTO, accountId);
         verify(transactionRepository, times(1)).save(any(TransactionRecord.class));
-        verify(rabbitMQProducer, times(1)).sendMessage(anyString());
 
         assertEquals(updatedAccountDTO.balance(), result.balance());
     }
@@ -67,8 +62,6 @@ class TransactionServiceTest {
         });
 
         assertEquals("Feign client error", exception.getMessage());
-
-        verify(rabbitMQProducer, times(1)).sendMessage(contains("Error during withdraw"));
     }
 
     @Test
@@ -81,6 +74,5 @@ class TransactionServiceTest {
         transactionService.transfer(transactionDTO);
         verify(accountFeignClient, times(1)).processTransaction(transactionDTO);
         verify(transactionRepository, times(1)).save(any(TransactionRecord.class));
-        verify(rabbitMQProducer, times(1)).sendMessage(contains("Transfer successful"));
     }
 }

@@ -1,10 +1,9 @@
 package com.saproject.centerSA.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -18,60 +17,86 @@ public class RabbitMQConfig {
     public static final String EXCHANGE_TRANSACTIONS = "transactions_exchange";
     public static final String ROUTING_KEY = "transactions_routing_key";
 
+    public static final String DLX_EXCHANGE = "dlx_exchange";
+    public static final String DLQ_TRANSACTIONS = "dlq_transactions_queue";
+    public static final String DLQ_ROUTING_KEY = "dlq_routing_key";
+
     @Bean
-    public RabbitAdmin criarRabbitAdmin(ConnectionFactory connectionFactory) {
+    public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
         return new RabbitAdmin(connectionFactory);
     }
 
     @Bean
-    public ApplicationListener<ApplicationReadyEvent> inicalizarAdmin(RabbitAdmin rabbitAdmin){
-        return event -> rabbitAdmin.initialize();
+    public ApplicationListener<ApplicationReadyEvent> inicializarAdmin(RabbitAdmin rabbitAdmin) {
+        return event -> {
+            rabbitAdmin.declareExchange(transactionsExchange());
+            rabbitAdmin.declareExchange(deadLetterExchange());
+
+            rabbitAdmin.declareQueue(transactionQueue());
+            rabbitAdmin.declareQueue(deadLetterQueue());
+
+            rabbitAdmin.declareBinding(transactionsBinding(transactionQueue(), transactionsExchange()));
+            rabbitAdmin.declareBinding(deadLetterBinding());
+
+            rabbitAdmin.initialize();
+        };
     }
 
     @Bean
-    public Jackson2JsonMessageConverter jackson2JsonMessageConverter(){
+    public Jackson2JsonMessageConverter jackson2JsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
     @Bean
-    public RabbitTemplate rabbitTemplate (ConnectionFactory connectionFactory){
-        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setMessageConverter(jackson2JsonMessageConverter());
-
-        return rabbitTemplate;
+    public Queue transactionQueue() {
+        return QueueBuilder.durable(QUEUE_TRANSACTIONS)
+                .withArgument("x-dead-letter-exchange", DLX_EXCHANGE)
+                .withArgument("x-dead-letter-routing-key", DLQ_ROUTING_KEY)
+                .build();
     }
 
-
     @Bean
-    public Queue transactionsQueue() {
-        System.out.println("Creating queue: " + QUEUE_TRANSACTIONS);
-        Queue queue = new Queue(QUEUE_TRANSACTIONS, true);
-        System.out.println("Queue created: " + queue.getName());
-        return queue;
+    public Queue deadLetterQueue() {
+        return QueueBuilder.durable(DLQ_TRANSACTIONS).build();
     }
 
     @Bean
     public DirectExchange transactionsExchange() {
-        System.out.println("Creating exchange: " + EXCHANGE_TRANSACTIONS);
-        DirectExchange exchange = new DirectExchange(EXCHANGE_TRANSACTIONS);
-        System.out.println("Exchange created: " + exchange.getName());
-        return exchange;
+        return new DirectExchange(EXCHANGE_TRANSACTIONS);
     }
 
     @Bean
-    public Binding transactionsBinding(Queue transactionsQueue, DirectExchange transactionsExchange) {
-        System.out.println("Binding queue to exchange with routing key: " + ROUTING_KEY);
-        Binding binding = BindingBuilder.bind(transactionsQueue)
+    public DirectExchange deadLetterExchange() {
+        return new DirectExchange(DLX_EXCHANGE);
+    }
+
+    @Bean
+    public Binding transactionsBinding(Queue transactionQueue, DirectExchange transactionsExchange) {
+        return BindingBuilder.bind(transactionQueue)
                 .to(transactionsExchange)
                 .with(ROUTING_KEY);
-        System.out.println("Binding created: " + binding);
-        return binding;
     }
 
     @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
+    public Binding deadLetterBinding() {
+        return BindingBuilder.bind(deadLetterQueue())
+                .to(deadLetterExchange())
+                .with(DLQ_ROUTING_KEY);
     }
 
+    @Bean
+    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
+            ConnectionFactory connectionFactory,
+            Jackson2JsonMessageConverter converter) {
 
+        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+        factory.setConnectionFactory(connectionFactory);
+        factory.setMessageConverter(converter);
+        factory.setDefaultRequeueRejected(false);
+        factory.setConcurrentConsumers(1);
+        factory.setMaxConcurrentConsumers(5);
+        factory.setPrefetchCount(10);
+        factory.setRecoveryInterval(5000L);
+        return factory;
+    }
 }
