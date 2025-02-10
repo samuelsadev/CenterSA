@@ -28,11 +28,13 @@ Desenvolvi uma API com Java e Spring, ela consome a minha API AccountBankSA, ass
 ## Modelo de teste Json
 
 - Esse modelo pode ser usado tanto para requisições HTTP, quanto no Rabbitm:
+```json
 {
   "originAccountNumber": "57411542",
   "destinationAccountNumber": "57432637",
   "amount": 200.0
 }
+
 
 
 **Imagens**
